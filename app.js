@@ -10,6 +10,155 @@ const outputPath = path.join(OUTPUT_DIR, "team.html");
 
 const render = require("./lib/htmlRenderer");
 
+const employeeTeam = [];
+function askQuestions() {
+    inquirer.
+        prompt([{
+            type: "list",
+            message: "What would you like to add?",
+            name: "addToTeam",
+            choices: ["Manager", "Intern", "Engineer", "N/A, write file"],
+        }])
+        .then(function (answers) {
+            if (answers.addToTeam === "Manager") {
+                managerInfo().then(function () {
+                    askQuestions();
+                }).catch(function (err) {
+                    console.log(err);
+                })
+
+            }
+            else if (answers.addToTeam === "Intern") {
+                internInfo().then(function () {
+                    askQuestions();
+                }).catch(function (err) {
+                    console.log(err);
+                })
+            }
+            else if (answers.addToTeam === "Engineer") {
+                engineerInfo().then(function () {
+                    askQuestions();
+                }).catch(function (err) {
+                    console.log(err);
+                })
+            }
+            else {
+                const teamHTML = render(employeeTeam);
+                fs.writeFile(outputPath, teamHTML, function (err) {
+                    if (err) {
+                        return console.log(err);
+                    }
+                    console.log("Finished writing HTML file");
+                });
+            }
+        });
+}
+
+
+function managerInfo() {
+    return inquirer
+        .prompt([{
+            type: "input",
+            message: "What is the manager's name?",
+            name: "name",
+        },
+        {
+            type: "input",
+            message: "What is the manager's ID?",
+            name: "id",
+        },
+        {
+            type: "input",
+            message: "What is the manager's Email?",
+            name: "email",
+        },
+        {
+            type: "input",
+            message: "What is the manager's office number?",
+            name: "officeNumber",
+        }
+
+
+        ]).then(function (answers) {
+            const managerObj = new Manager(
+                answers.name, answers.id, answers.email, answers.officeNumber
+            )
+            employeeTeam.push(managerObj);
+
+        }).catch(function (err) {
+            console.log(err);
+        })
+}
+function internInfo() {
+    return inquirer
+        .prompt([{
+            type: "input",
+            message: "What is the intern's name?",
+            name: "name",
+        },
+        {
+            type: "input",
+            message: "What is the intern's ID?",
+            name: "id",
+        },
+        {
+            type: "input",
+            message: "What is the intern's email?",
+            name: "email",
+        },
+        {
+            type: "input",
+            message: "What is the intern's school?",
+            name: "school",
+        }
+
+
+        ]).then(function (answers) {
+            const internObj = new Intern(
+                answers.name, answers.id, answers.email, answers.school
+            )
+            employeeTeam.push(internObj);
+
+        }).catch(function (err) {
+            console.log(err);
+        })
+}
+function engineerInfo() {
+    return inquirer
+        .prompt([{
+            type: "input",
+            message: "What is the engineer's name?",
+            name: "name",
+        },
+        {
+            type: "input",
+            message: "What is the engineer's ID?",
+            name: "id",
+        },
+        {
+            type: "input",
+            message: "What is the engineer's email?",
+            name: "email",
+        },
+        {
+            type: "input",
+            message: "What is the engineer's github?",
+            name: "github",
+        }
+
+
+        ]).then(function (answers) {
+            const engineerObj = new Engineer(
+                answers.name, answers.id, answers.email, answers.github
+            )
+            employeeTeam.push(engineerObj);
+
+        }).catch(function (err) {
+            console.log(err);
+        })
+}
+askQuestions();
+
 
 // Write code to use inquirer to gather information about the development team members,
 // and to create objects for each team member (using the correct classes as blueprints!)
